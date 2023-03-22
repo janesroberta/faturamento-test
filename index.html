@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style>
+        .form {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container rounded text-center border border-dark form mt-4" style="width: 40%;">
+        <blockquote class="blockquote mt-2 mb-5">
+            <p>Historico de Faturamento</p>
+        </blockquote>
+        <div class="row">
+            <div class="col">
+                <table id="table" class="table table-bordered">
+
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="./data.js"></script>
+    <script>
+        const faturamento = json;
+        let menorFaturamento = 0;
+        let maiorFaturamento = 0;
+        let mediaFaturamento = 0;
+        let totalFaturamento = 0;
+        let diasParaCalculoDaMedia = 0;
+        let diasDeFaturamentoAcimaDaMedia = [];
+
+        function lerDados() {
+            faturamento.forEach((dia, index) => {
+                calculaMenor(dia.valor, index);
+                calculaMaior(dia.valor, index);
+
+                if (dia.valor > 0) {
+                    diasParaCalculoDaMedia++;
+                }
+
+                totalFaturamento += dia.valor;
+            });
+        }
+
+        function calculaMenor(valor, index) {
+            if (valor < faturamento[menorFaturamento].valor && valor > 0) {
+                menorFaturamento = index;
+            }
+        }
+
+        function mostrarDados() {
+            const tabela = document.getElementById('table');
+            tabela.innerHTML += `
+            <tr class="fw-bold">
+                <td>
+                    Menor Faturamento
+                </td>
+                <td>
+                    R$ ${faturamento[menorFaturamento].valor.toFixed(2)}
+                </td>
+            </tr>
+            `
+            
+            tabela.innerHTML += `
+            <tr class="fw-bold">
+                <td>
+                    Maior Faturamento
+                </td>
+                <td>
+                    R$ ${faturamento[maiorFaturamento].valor.toFixed(2)}
+                </td>
+            </tr>
+            `
+            
+            tabela.innerHTML += `
+            <tr class="fw-bold">
+                <td>
+                    Dias com faturamento acima da média
+                </td>
+                <td>
+                    ${diasDeFaturamentoAcimaDaMedia}
+                </td>
+            </tr>
+            `
+        }
+
+        function calculaMaior(valor, index) {
+            if (valor > faturamento[maiorFaturamento].valor) {
+                maiorFaturamento = index;
+            }
+        }
+
+        function calculaMedia() {
+            mediaFaturamento = totalFaturamento / diasParaCalculoDaMedia;
+        }
+
+        function verificarDiasComFaturamentoAcimaDaMedia() {
+            faturamento.forEach((dia, index) => {
+                if (dia.valor > mediaFaturamento) {
+                    diasDeFaturamentoAcimaDaMedia.push(index + 1);
+                }
+            });
+        }
+
+        lerDados();
+        calculaMedia();
+        verificarDiasComFaturamentoAcimaDaMedia();
+        mostrarDados();
+
+        console.log('menor - ' + faturamento[menorFaturamento].valor);
+        console.log('maior - ' + faturamento[maiorFaturamento].valor);
+        console.log('diasParaCalculoDaMedia - ' + diasParaCalculoDaMedia);
+        console.log('mediaFaturamento - ' + mediaFaturamento);
+        console.log('diasDeFaturamentoAcimaDaMedia - ' + diasDeFaturamentoAcimaDaMedia);
+
+    </script>
+</body>
+
+</html>
